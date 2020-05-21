@@ -1,9 +1,45 @@
 const Signer = require("./index");
+const Signature = require("./Signature")
 const http = require("http");
+var rp = require("request-promise");
+
+let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) " +
+  "AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1";
+
+async function extractTac() {
+  const query = {
+    uri: 'https://www.tiktok.com/discover',
+    method: 'GET',
+    headers: {
+      'User-Agent': userAgent,
+      accept: 'application/json, text/plain, */*',
+      referer: 'https://www.tiktok.com/',
+    },
+    gzip: true,
+  };
+
+  try {
+    const response = await rp(query);
+    const tacRegex = /<script>tac='([^]*)'<\/script>/.exec(response);
+    if (tacRegex) {
+      return tacRegex[1];
+    } else {
+      throw new Error("Can't extract Tac value");
+    }
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+async function getSignature(url) {
+  const tac = await extractTac()
+  const token = Signature.generateSignature(url, userAgent, tac);
+  return token
+}
 
 (async function main() {
   try {
-    const signer = new Signer();
+    // const signer = new Signer();
 
     const server = http
       .createServer()
@@ -22,7 +58,8 @@ const http = require("http");
     //   });
     // }, 1 * 60 * 60 * 1000);
 
-    signer.init(); // !?
+    // TODO: (andrew) Change signing method
+    // signer.init(); // !?
 
     server.on("request", (request, response) => {
       if (request.method === "POST" && request.url === "/signature") {
@@ -35,15 +72,20 @@ const http = require("http");
           console.log("Received url: " + url);
 
           try {
-            const verifyFp = await signer.getVerifyFp();
-            const token = await signer.sign(url);
-            let output = JSON.stringify({
-              signature: token,
-              verifyFp: verifyFp,
-            });
-            response.writeHead(200, { "Content-Type": "application/json" });
-            response.end(output);
-            console.log("Sent result: " + output);
+            // TODO: (andrew) Change signing method
+            // const verifyFp = await signer.getVerifyFp();
+            // const token = await signer.sign(url);
+            // let output = JSON.stringify({
+            //   signature: token,
+            //   verifyFp: verifyFp,
+            // });
+            // response.writeHead(200, { "Content-Type": "application/json" });
+            // response.end(output);
+            // console.log("Sent result: " + output);
+            token = await getSignature(url)
+            response.writeHead(200);
+            response.end(token);
+            console.log("Sent signature: " + token);
           } catch (err) {
             console.log(err);
           }
@@ -54,7 +96,7 @@ const http = require("http");
       }
     });
 
-    await signer.close();
+    // await signer.close();
   } catch (err) {
     console.error(err);
   }
