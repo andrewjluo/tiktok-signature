@@ -66,8 +66,6 @@ class Signer {
       }, this.tac);
     }
 
-    await this.page.waitFor(10000);
-
     await this.page.evaluate(() => {
       window.onload = function () {
         var element = document.getElementById("video");
