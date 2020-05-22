@@ -3,6 +3,8 @@ const Signature = require("./Signature")
 const http = require("http");
 var rp = require("request-promise");
 
+let OLD_SIGNER_ON = false
+
 let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) " +
   "AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1";
 
@@ -39,7 +41,10 @@ async function getSignature(url) {
 
 (async function main() {
   try {
-    // const signer = new Signer();
+    let signer = undefined
+    if (OLD_SIGNER_ON) {
+      signer = new Signer();
+    }
 
     const server = http
       .createServer()
@@ -49,6 +54,7 @@ async function getSignature(url) {
         console.log("TikTok Signature server started");
       });
 
+    if (OLD_SIGNER_ON) {
     // Uncomment if you want to auto-exit this application after a period of time
     // Supervisord will attempt to re-open it if are used
     // setTimeout(function () {
@@ -58,8 +64,8 @@ async function getSignature(url) {
     //   });
     // }, 1 * 60 * 60 * 1000);
 
-    // TODO: (andrew) Change signing method
-    // signer.init(); // !?
+    signer.init(); // !?
+    }
 
     server.on("request", (request, response) => {
       if (request.method === "POST" && request.url === "/signature") {
@@ -72,20 +78,25 @@ async function getSignature(url) {
           console.log("Received url: " + url);
 
           try {
-            // TODO: (andrew) Change signing method
-            // const verifyFp = await signer.getVerifyFp();
-            // const token = await signer.sign(url);
-            // let output = JSON.stringify({
-            //   signature: token,
-            //   verifyFp: verifyFp,
-            // });
-            // response.writeHead(200, { "Content-Type": "application/json" });
-            // response.end(output);
-            // console.log("Sent result: " + output);
-            token = await getSignature(url)
-            response.writeHead(200);
-            response.end(token);
-            console.log("Sent signature: " + token);
+            let token = undefined
+            if (OLD_SIGNER_ON) {
+              token = await signer.sign(url);
+              const verifyFp = await signer.getVerifyFp();
+              const token = await signer.sign(url);
+              let output = JSON.stringify({
+                signature: token,
+                verifyFp: verifyFp,
+              });
+              response.writeHead(200, { "Content-Type": "application/json" });
+              response.end(output);
+              console.log("Sent result: " + output);
+            }
+            else {
+              token = await getSignature(url)
+              response.writeHead(200);
+              response.end(token);
+              console.log("Sent signature: " + token);
+            }
           } catch (err) {
             console.log(err);
           }
