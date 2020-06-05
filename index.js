@@ -94,10 +94,6 @@ class Signer {
   }
 
   async sign(str) {
-    if (!this.page || !this.context) {
-      console.log("WAIT INIT")
-      return
-    }
     let verifyFp = await this.getVerifyFp();
     let res = await this.page.evaluate(
       `generateSignature("${str}", "${verifyFp}")`
