@@ -3,40 +3,14 @@ const Signature = require("./Signature")
 const http = require("http");
 var rp = require("request-promise");
 
-let OLD_SIGNER_ON = true
+let OLD_SIGNER_ON = false
 
 let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) " +
   "AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1";
 
-async function extractTac() {
-  const query = {
-    uri: 'https://www.tiktok.com/discover',
-    method: 'GET',
-    headers: {
-      'User-Agent': userAgent,
-      accept: 'application/json, text/plain, */*',
-      referer: 'https://www.tiktok.com/',
-    },
-    gzip: true,
-  };
-
-  try {
-    const response = await rp(query);
-    const tacRegex = /<script>tac='([^]*)'<\/script>/.exec(response);
-    if (tacRegex) {
-      return tacRegex[1];
-    } else {
-      throw new Error("Can't extract Tac value");
-    }
-  } catch (error) {
-    throw new Error(error)
-  }
-}
-
-async function getSignature(url) {
-  const tac = await extractTac()
-  const token = Signature.generateSignature(url, userAgent, tac);
-  return token
+function sign(url) {
+  let signingFunc = Signature.sign(userAgent)
+  return signingFunc({ url })
 }
 
 (async function main() {
@@ -91,7 +65,7 @@ async function getSignature(url) {
               console.log("Sent result: " + output);
             }
             else {
-              token = await getSignature(url)
+              token = sign(url)
               response.writeHead(200);
               response.end(token);
               console.log("Sent signature: " + token);
