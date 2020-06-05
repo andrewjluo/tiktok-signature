@@ -64,7 +64,7 @@ async function getSignature(url) {
     //   });
     // }, 1 * 60 * 60 * 1000);
 
-    signer.init(); // !?
+      signer.init(); // !?
     }
 
     server.on("request", (request, response) => {
