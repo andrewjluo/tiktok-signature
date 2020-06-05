@@ -38,10 +38,6 @@ class Signer {
   }
 
   async init() {
-    if (!this.browser) {
-      this.browser = await webkit.launch(this.options);
-    }
-
     let emulateTemplate = { ...iPhone11 };
     emulateTemplate.viewport.width = getRandomInt(320, 1920);
     emulateTemplate.viewport.height = getRandomInt(320, 1920);
