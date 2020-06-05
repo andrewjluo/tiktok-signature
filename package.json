@@ -3,6 +3,9 @@
   "version": "1.1.7",
   "description": "Generate TikTok Signature.",
   "main": "index.js",
+  "engines": {
+    "node": "14.4.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node listen.js"
