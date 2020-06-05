@@ -3,7 +3,7 @@ const Signature = require("./Signature")
 const http = require("http");
 var rp = require("request-promise");
 
-let OLD_SIGNER_ON = false
+let OLD_SIGNER_ON = true
 
 let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) " +
   "AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1";
@@ -80,9 +80,8 @@ async function getSignature(url) {
           try {
             let token = undefined
             if (OLD_SIGNER_ON) {
-              token = await signer.sign(url);
               const verifyFp = await signer.getVerifyFp();
-              const token = await signer.sign(url);
+              token = await signer.sign(url);
               let output = JSON.stringify({
                 signature: token,
                 verifyFp: verifyFp,

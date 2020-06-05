@@ -58,7 +58,9 @@ class Signer {
     await this.page.goto("https://www.tiktok.com/trending?lang=en", {
       waitUntil: "load",
     });
-    await this.page.click(".swiper-wrapper");
+
+    // Andrew: Doesn't work
+    // await this.page.click(".swiper-wrapper");
 
     if (this.tac) {
       await this.page.evaluate((x) => {
