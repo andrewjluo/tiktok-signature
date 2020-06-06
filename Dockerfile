@@ -33,4 +33,7 @@ RUN apt-get install -y libnss3 \
 RUN apt-get install -y libdbus-glib-1-2 \
                        libxt6
 
+COPY . .
 RUN npm install
+RUN npm i playwright@1.0.2
+CMD ["npm", "start"]
