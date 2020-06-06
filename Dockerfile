@@ -1,5 +1,7 @@
 FROM ubuntu:bionic
 
+WORKDIR /usr/app
+
 # 1. Install node12
 RUN apt-get update && apt-get install -y curl && \
     curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
@@ -37,7 +39,18 @@ RUN apt-get install -y libnss3 \
 RUN apt-get install -y libdbus-glib-1-2 \
                        libxt6
 
+RUN groupadd -r pwuser && useradd -r -g pwuser -G audio,video pwuser \
+    && mkdir -p /home/pwuser/Downloads \
+    && chown -R pwuser:pwuser /home/pwuser
+
 COPY . .
 RUN npm install
-RUN npm i playwright@1.0.2
+
+RUN chown -R pwuser:pwuser /usr/app
+
+USER pwuser
+
+RUN npm i --only=prod playwright@1.0.2 && \
+                 node node_modules/playwright/install.js
+
 CMD ["npm", "start"]
