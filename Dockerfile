@@ -20,6 +20,7 @@ RUN apt-get install -y libwoff1 \
                        libxslt1.1 \
                        libevent-2.1-6 \
                        libgles2 \
+                       libglu1 \
                        libvpx5
 
 # 3. Install Chromium dependencies
