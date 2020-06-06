@@ -50,7 +50,7 @@ RUN chown -R pwuser:pwuser /usr/app
 
 USER pwuser
 
-RUN npm i --only=prod playwright && \
-                 XDG_CACHE_HOME=/usr/app node node_modules/playwright/install.js
+RUN npm i playwright@1.0.2 && \
+      XDG_CACHE_HOME=/usr/app node node_modules/playwright/install.js
 
 CMD ["npm", "start"]
