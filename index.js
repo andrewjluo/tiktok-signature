@@ -55,7 +55,7 @@ class Signer {
     });
 
     this.page = await this.context.newPage();
-    await this.page.goto("https://www.tiktok.com/trending?lang=en", {
+    await this.page.goto("https://www.tiktok.com/foryou?lang=en", {
       waitUntil: "load",
     });
 
@@ -74,6 +74,7 @@ class Signer {
         console.log(element);
         element.muted = "muted";
       };
+
       if (typeof window.byted_acrawler.sign !== "function") {
         throw "No function found";
       }
