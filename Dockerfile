@@ -50,7 +50,7 @@ RUN chown -R pwuser:pwuser /usr/app
 
 USER pwuser
 
-RUN node /home/pwuser/node_modules/playwright/install
+RUN npm i playwright
 
 RUN cp -r /home/pwuser/.cache /usr/app/.cache
 
